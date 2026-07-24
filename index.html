@@ -45,6 +45,9 @@
   body{
     padding:0 0 60px;
   }
+  body.modal-open {
+    overflow: hidden;
+  }
 
   .wrap{
     max-width:940px;
@@ -454,8 +457,8 @@
     position: fixed;
     top: 0;
     left: 0;
-    width: 100vw;
-    height: 100vh;
+    right: 0;
+    bottom: 0;
     background: rgba(0,0,0,0.5);
     display: none;
     align-items: flex-end;
@@ -476,6 +479,18 @@
     animation: slideUp 0.25s ease-out;
     display: flex;
     flex-direction: column;
+  }
+  @media (max-width: 559px) {
+    .modal {
+      align-items: flex-start;
+    }
+    .modal-content {
+      height: 100%;
+      max-height: 100%;
+      border-radius: 0;
+      border: none;
+      box-shadow: none;
+    }
   }
   @media (min-width: 560px){
     .modal{ align-items: center; }
@@ -1083,14 +1098,19 @@ el.results.addEventListener('click', e => {
 el.settingsBtn.addEventListener('click', () => {
   el.apiWebUrl.value = apiWebUrlValue;
   el.settingsModal.classList.add('show');
+  document.body.classList.add('modal-open');
 });
 
 el.configBannerBtn.addEventListener('click', () => {
   el.apiWebUrl.value = apiWebUrlValue;
   el.settingsModal.classList.add('show');
+  document.body.classList.add('modal-open');
 });
 
-const closeSettings = () => el.settingsModal.classList.remove('show');
+const closeSettings = () => {
+  el.settingsModal.classList.remove('show');
+  document.body.classList.remove('modal-open');
+};
 el.closeSettingsModalBtn.addEventListener('click', closeSettings);
 el.cancelSettingsBtn.addEventListener('click', closeSettings);
 
@@ -1111,6 +1131,7 @@ function openActionModal(type, partName, currentQty) {
     alert('กรุณาตั้งค่า Google Apps Script Web App URL ก่อนเริ่มใช้งานการบันทึกประวัติ');
     el.apiWebUrl.value = apiWebUrlValue;
     el.settingsModal.classList.add('show');
+    document.body.classList.add('modal-open');
     return;
   }
 
@@ -1143,9 +1164,13 @@ function openActionModal(type, partName, currentQty) {
   }
 
   el.actionModal.classList.add('show');
+  document.body.classList.add('modal-open');
 }
 
-const closeAction = () => el.actionModal.classList.remove('show');
+const closeAction = () => {
+  el.actionModal.classList.remove('show');
+  document.body.classList.remove('modal-open');
+};
 el.closeActionModalBtn.addEventListener('click', closeAction);
 el.cancelActionBtn.addEventListener('click', closeAction);
 
