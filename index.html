@@ -396,6 +396,9 @@
     <div class="count-badge">
       <span class="dot loading" id="statusDot"></span>
       <span id="statusText">กำลังโหลดข้อมูล…</span>
+      <button id="refreshBtn" title="โหลดข้อมูลใหม่" style="border:none;background:transparent;color:var(--text-faint);cursor:pointer;padding:0 0 0 4px;display:flex;align-items:center;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+      </button>
     </div>
   </header>
 
@@ -454,6 +457,7 @@ const el = {
   clearBtn: document.getElementById('clearBtn'),
   searchBtn: document.getElementById('searchBtn'),
   results: document.getElementById('results'),
+  refreshBtn: document.getElementById('refreshBtn'),
   emptyState: document.getElementById('emptyState'),
   loadErrorState: document.getElementById('loadErrorState'),
   noResultState: document.getElementById('noResultState'),
@@ -462,18 +466,51 @@ const el = {
 let items = [];
 let debounceTimer = null;
 
-window.onload = function(){
-  Papa.parse(CSV_URL, {
+// สร้าง object ใหม่ที่ตัดช่องว่าง/ทำหัวคอลัมน์ให้เป็นตัวพิมพ์ใหญ่ทั้งหมด
+// เพื่อไม่ให้พลาดข้อมูลเวลาหัวตารางใน Google Sheet มีช่องว่างเกิน หรือสะกดต่างเคส
+function normalizeRow(row){
+  const clean = {};
+  for(const key in row){
+    const cleanKey = key.trim().toUpperCase();
+    let value = row[key];
+    if(typeof value === 'string') value = value.trim();
+    clean[cleanKey] = value;
+  }
+  return clean;
+}
+
+function getField(row, ...names){
+  for(const n of names){
+    const v = row[n.toUpperCase()];
+    if(v) return v;
+  }
+  return "";
+}
+
+function loadData(){
+  el.dot.className = 'dot loading';
+  el.status.textContent = 'กำลังโหลดข้อมูล…';
+  el.input.disabled = true;
+
+  // เติม timestamp กัน browser/Google cache ข้อมูล CSV เก่าไว้
+  // (สาเหตุที่พบบ่อยที่สุดของ "เพิ่มคอลัมน์รูปแล้วแต่ไม่ขึ้น" คือแคชเก่าค้างอยู่)
+  const bustedUrl = CSV_URL + (CSV_URL.includes('?') ? '&' : '?') + '_=' + Date.now();
+
+  Papa.parse(bustedUrl, {
     download: true,
     header: true,
     skipEmptyLines: true,
     complete: function(result){
-      items = result.data;
+      items = result.data.map(normalizeRow);
       el.dot.className = 'dot ready';
       el.status.textContent = `พร้อมค้นหา · ${items.length} รายการ`;
       el.input.disabled = false;
-      el.input.focus();
-      showState('empty');
+      if(el.input.value.trim()){
+        searchData();
+      } else {
+        el.input.focus();
+        showState('empty');
+      }
     },
     error: function(){
       el.dot.className = 'dot error';
@@ -481,7 +518,11 @@ window.onload = function(){
       showState('loadError');
     }
   });
-};
+}
+
+window.onload = loadData;
+
+el.refreshBtn.addEventListener('click', loadData);
 
 function showState(name){
   el.emptyState.classList.remove('show');
@@ -535,7 +576,7 @@ function searchData(){
   }
 
   const found = items.filter(item => {
-    const name = (item.NAME || item.Name || item["ชื่อ"] || "").toLowerCase();
+    const name = getField(item, "NAME", "ชื่อ").toLowerCase();
     return name.includes(keyword);
   });
 
@@ -555,9 +596,9 @@ function searchData(){
   el.results.appendChild(meta);
 
   found.forEach((item, i) => {
-    const title = item.NAME || item.Name || item["ชื่อ"] || "";
-    const desc = item.DESCRIPTION || item.Description || item["รายละเอียด"] || "";
-    let img = item.IMAGEURL || item.ImageUrl || item["รูปภาพ"] || "";
+    const title = getField(item, "NAME", "ชื่อ");
+    const desc = getField(item, "DESCRIPTION", "รายละเอียด");
+    let img = getField(item, "IMAGEURL", "IMAGE URL", "รูปภาพ");
     img = convertDriveLink(img);
 
     const card = document.createElement('div');
@@ -565,7 +606,8 @@ function searchData(){
 
     const thumbHtml = img
       ? `<img src="${img}" alt="${escapeHtml(title)}" loading="lazy"
-           onerror="this.closest('.item-thumb').innerHTML='<div class=&quot;thumb-fallback&quot;>🖼️<span>โหลดรูปไม่ได้</span></div>'">`
+           data-src="${escapeHtml(img)}"
+           onerror="const u=this.getAttribute('data-src'); this.closest('.item-thumb').innerHTML='<div class=&quot;thumb-fallback&quot;>🖼️<span>โหลดรูปไม่ได้</span><a href=&quot;'+u+'&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot; style=&quot;color:var(--accent);font-size:11px;word-break:break-all;padding:0 8px;text-align:center;&quot;>เปิดลิงก์รูปเพื่อตรวจสอบ</a></div>'">`
       : `<div class="thumb-fallback">🖼️<span>ไม่มีรูปภาพ</span></div>`;
 
     card.innerHTML = `
