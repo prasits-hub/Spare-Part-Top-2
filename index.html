@@ -1160,31 +1160,34 @@ el.actionForm.addEventListener('submit', e => {
   });
 
   // ส่ง Request ไปยัง Apps Script Web App
-  // ใช้ GET ผ่าน CORS redirect
+  // Google Apps Script จะ redirect เสมอ ต้องใช้ redirect: 'follow'
   fetch(`${apiWebUrlValue}?${params.toString()}`, {
-    method: 'GET',
-    mode: 'cors'
+    redirect: 'follow'
   })
-  .then(response => {
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    return response.json();
-  })
-  .then(data => {
+  .then(response => response.text())
+  .then(text => {
     el.loadingOverlay.classList.remove('show');
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch(e) {
+      // ถ้า parse JSON ไม่ได้ แสดงว่าสคริปต์ยังไม่ถูก deploy ใหม่
+      console.error('Response is not JSON:', text);
+      alert('ได้รับการตอบกลับที่ไม่ใช่ JSON จาก Apps Script\nกรุณา Deploy เวอร์ชันใหม่ใน Google Apps Script แล้วลองอีกครั้ง\n\nข้อความที่ได้รับ: ' + text.substring(0, 100));
+      return;
+    }
     if (data.status === 'success') {
-      alert('บันทึกข้อมูลสำเร็จแล้ว!');
+      alert('บันทึกข้อมูลสำเร็จแล้ว!\n' + (data.part || '') + ': ' + (data.action === 'Add' ? '+' : '-') + qty + ' → คงเหลือ ' + data.newQty + ' ชิ้น');
       closeAction();
       loadData(); // โหลดข้อมูลใหม่เพื่ออัปเดตหน้าจอหลัก
     } else {
-      alert(`เกิดข้อผิดพลาดในการบันทึก: ${data.message}`);
+      alert('เกิดข้อผิดพลาดในการบันทึก:\n' + data.message);
     }
   })
   .catch(err => {
     el.loadingOverlay.classList.remove('show');
     console.error('Error submitting transaction:', err);
-    alert(`เกิดข้อผิดพลาดในการเชื่อมต่อ: ${err.message}\nโปรดตรวจสอบการตั้งค่า URL หรือการเชื่อมต่ออินเทอร์เน็ต`);
+    alert('เกิดข้อผิดพลาดในการเชื่อมต่อ\nกรุณาตรวจสอบว่า URL ถูกต้องและ Apps Script ถูก Deploy แล้ว\n\nError: ' + err.message);
   });
 });
 
