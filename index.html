@@ -370,6 +370,253 @@
     .brand-text h1{ font-size:18px; }
     .toyota-logo{ height:38px; }
   }
+
+  /* Config Banner */
+  .config-banner {
+    background: #fff3cd;
+    border: 1px solid #ffeeba;
+    color: #856404;
+    padding: 12px 16px;
+    border-radius: var(--radius);
+    margin-bottom: 16px;
+    display: none;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    font-size: 13.5px;
+    animation: fadeIn 0.3s ease;
+  }
+  .config-banner.show { display: flex; }
+  .config-banner button {
+    background: #856404;
+    color: #fff;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: var(--sans);
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .config-banner button:hover { background: #6b5003; }
+
+  /* Stock styling on item card */
+  .item-stock {
+    font-size: 13px;
+    font-weight: 600;
+    margin-top: 4px;
+  }
+  .item-stock.ok { color: var(--ok); }
+  .item-stock.low { color: #d65a31; } /* Warm orange */
+  .item-stock.out { color: var(--err); } /* Red */
+
+  /* Action buttons on item card */
+  .item-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .item-actions .action-btn {
+    flex: 1;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    transition: background .15s ease, border-color .15s ease, color .15s ease;
+  }
+  .item-actions .action-btn.use-btn {
+    color: var(--accent);
+    border-color: var(--accent-dim);
+    background: var(--accent-dim);
+  }
+  .item-actions .action-btn.use-btn:hover {
+    background: var(--accent);
+    color: #ffffff;
+    border-color: var(--accent);
+  }
+  .item-actions .action-btn.add-btn {
+    color: var(--ok);
+    border-color: rgba(46,158,91,0.15);
+    background: rgba(46,158,91,0.08);
+  }
+  .item-actions .action-btn.add-btn:hover {
+    background: var(--ok);
+    color: #ffffff;
+    border-color: var(--ok);
+  }
+
+  /* Modal styles */
+  .modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.5);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    animation: fadeIn 0.2s ease;
+  }
+  .modal.show { display: flex; }
+  .modal-content {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    width: 100%;
+    max-width: 460px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    overflow: hidden;
+    animation: slideUp 0.25s ease-out;
+  }
+  .modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .modal-header h2 {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0;
+    color: var(--text);
+  }
+  .close-modal-btn {
+    border: none;
+    background: transparent;
+    font-size: 24px;
+    color: var(--text-faint);
+    cursor: pointer;
+    line-height: 1;
+    padding: 0;
+  }
+  .close-modal-btn:hover { color: var(--text); }
+  
+  .modal-body {
+    padding: 20px;
+  }
+  
+  /* Form styles */
+  .form-group {
+    margin-bottom: 16px;
+  }
+  .form-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 6px;
+    color: var(--text-muted);
+  }
+  .form-group input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1.5px solid var(--border);
+    border-radius: 6px;
+    font-family: var(--sans);
+    font-size: 14.5px;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.15s ease;
+  }
+  .form-group input:focus {
+    border-color: var(--accent);
+  }
+  .form-static-text {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    padding: 4px 0;
+  }
+  .form-error-msg {
+    font-size: 12px;
+    color: var(--err);
+    margin-top: 4px;
+    display: none;
+  }
+  .form-error-msg.show { display: block; }
+  
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 24px;
+  }
+  .btn {
+    padding: 10px 18px;
+    border-radius: 6px;
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    border: none;
+    transition: background 0.15s ease;
+  }
+  .btn-secondary {
+    background: var(--surface-2);
+    color: var(--text-muted);
+  }
+  .btn-secondary:hover { background: #eaeaea; color: var(--text); }
+  .btn-primary {
+    background: var(--accent);
+    color: #ffffff;
+  }
+  .btn-primary:hover { background: var(--accent-dark); }
+
+  /* Global Loading Overlay */
+  .loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.4);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+  }
+  .loading-overlay.show { display: flex; }
+  .spinner-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 24px;
+    border-radius: var(--radius);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    text-align: center;
+    width: 200px;
+  }
+  .spinner {
+    width: 32px;
+    height: 32px;
+    border: 4px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    margin: 0 auto 12px;
+    animation: spin 0.8s linear infinite;
+  }
+  .spinner-text {
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--text-muted);
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes slideUp {
+    from { transform: translateY(20px); }
+    to { transform: translateY(0); }
+  }
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
 </style>
 </head>
 
@@ -399,8 +646,16 @@
       <button id="refreshBtn" title="โหลดข้อมูลใหม่" style="border:none;background:transparent;color:var(--text-faint);cursor:pointer;padding:0 0 0 4px;display:flex;align-items:center;">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
       </button>
+      <button id="settingsBtn" title="ตั้งค่าระบบหลังบ้าน" style="border:none;background:transparent;color:var(--text-faint);cursor:pointer;padding:0 0 0 8px;margin-left:4px;border-left:1px solid var(--border);display:flex;align-items:center;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+      </button>
     </div>
   </header>
+
+  <div class="config-banner" id="configBanner">
+    <span>⚠️ ระบบบันทึกประวัติการเบิก/เติมอะไหล่ยังไม่เปิดใช้งาน (ยังไม่ได้เชื่อมต่อ Google Apps Script Web App)</span>
+    <button id="configBannerBtn">ตั้งค่าระบบ</button>
+  </div>
 
   <div class="search-panel">
     <div class="search-box">
@@ -445,6 +700,89 @@
 
 </div>
 
+<!-- Modal สำหรับ Add/Use -->
+<div id="actionModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 id="modalTitle">เบิกอะไหล่</h2>
+      <button class="close-modal-btn" id="closeActionModalBtn">&times;</button>
+    </div>
+    <div class="modal-body">
+      <form id="actionForm">
+        <input type="hidden" id="actionType">
+        <input type="hidden" id="actionPartName">
+        
+        <div class="form-group">
+          <label>ชื่ออะไหล่</label>
+          <div class="form-static-text" id="modalPartNameText">-</div>
+        </div>
+        
+        <div class="form-group">
+          <label id="qtyLabel">จำนวนคงเหลือเดิม</label>
+          <div class="form-static-text" id="modalCurrentQtyText">0 ชิ้น</div>
+        </div>
+
+        <div class="form-group">
+          <label for="actionQty" id="qtyInputLabel">จำนวนที่ต้องการเบิก</label>
+          <input type="number" id="actionQty" min="1" required placeholder="ระบุจำนวน...">
+          <div class="form-error-msg" id="qtyError"></div>
+        </div>
+
+        <div class="form-group">
+          <label for="actionUser">ผู้บันทึก / ผู้เบิก</label>
+          <input type="text" id="actionUser" required placeholder="ชื่อของคุณ...">
+        </div>
+
+        <div class="form-group">
+          <label for="actionReason" id="reasonLabel">สาเหตุ / สถานที่นำไปใช้</label>
+          <input type="text" id="actionReason" required placeholder="เช่น ซ่อมเครื่องจักร Line A...">
+        </div>
+
+        <div class="form-group">
+          <label for="actionDate">วันที่บันทึก</label>
+          <input type="date" id="actionDate" required>
+        </div>
+        
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" id="cancelActionBtn">ยกเลิก</button>
+          <button type="submit" class="btn btn-primary" id="submitActionBtn">ยืนยัน</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Settings Modal -->
+<div id="settingsModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>ตั้งค่าระบบหลังบ้าน (Google Sheets API)</h2>
+      <button class="close-modal-btn" id="closeSettingsModalBtn">&times;</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
+        กรอก URL ของ Google Apps Script Web App ที่ได้จากการ Deploy เพื่อเชื่อมระบบบันทึกประวัติ Add / Use
+      </p>
+      <div class="form-group">
+        <label for="apiWebUrl">Google Apps Script Web App URL</label>
+        <input type="url" id="apiWebUrl" placeholder="https://script.google.com/macros/s/.../exec">
+      </div>
+      <div class="form-actions">
+        <button type="button" class="btn btn-secondary" id="cancelSettingsBtn">ยกเลิก</button>
+        <button type="button" class="btn btn-primary" id="saveSettingsBtn">บันทึกตั้งค่า</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Global Loading Overlay -->
+<div id="loadingOverlay" class="loading-overlay">
+  <div class="spinner-box">
+    <div class="spinner"></div>
+    <div class="spinner-text" id="loadingText">กำลังบันทึกข้อมูล...</div>
+  </div>
+</div>
+
 <footer>MUS-T MAINTENANCE DEPARTMENT · DATA SOURCE: GOOGLE SHEETS</footer>
 
 <script>
@@ -461,10 +799,52 @@ const el = {
   emptyState: document.getElementById('emptyState'),
   loadErrorState: document.getElementById('loadErrorState'),
   noResultState: document.getElementById('noResultState'),
+  
+  // elements for settings and config banner
+  configBanner: document.getElementById('configBanner'),
+  configBannerBtn: document.getElementById('configBannerBtn'),
+  settingsBtn: document.getElementById('settingsBtn'),
+  settingsModal: document.getElementById('settingsModal'),
+  closeSettingsModalBtn: document.getElementById('closeSettingsModalBtn'),
+  cancelSettingsBtn: document.getElementById('cancelSettingsBtn'),
+  saveSettingsBtn: document.getElementById('saveSettingsBtn'),
+  apiWebUrl: document.getElementById('apiWebUrl'),
+
+  // elements for action modal
+  actionModal: document.getElementById('actionModal'),
+  closeActionModalBtn: document.getElementById('closeActionModalBtn'),
+  cancelActionBtn: document.getElementById('cancelActionBtn'),
+  actionForm: document.getElementById('actionForm'),
+  actionType: document.getElementById('actionType'),
+  actionPartName: document.getElementById('actionPartName'),
+  modalTitle: document.getElementById('modalTitle'),
+  modalPartNameText: document.getElementById('modalPartNameText'),
+  modalCurrentQtyText: document.getElementById('modalCurrentQtyText'),
+  qtyLabel: document.getElementById('qtyLabel'),
+  qtyInputLabel: document.getElementById('qtyInputLabel'),
+  actionQty: document.getElementById('actionQty'),
+  qtyError: document.getElementById('qtyError'),
+  actionUser: document.getElementById('actionUser'),
+  actionReason: document.getElementById('actionReason'),
+  reasonLabel: document.getElementById('reasonLabel'),
+  actionDate: document.getElementById('actionDate'),
+
+  // loading overlay
+  loadingOverlay: document.getElementById('loadingOverlay'),
+  loadingText: document.getElementById('loadingText'),
 };
 
 let items = [];
 let debounceTimer = null;
+let apiWebUrlValue = localStorage.getItem('mus_t_api_url') || '';
+
+function checkApiConfig() {
+  if (!apiWebUrlValue) {
+    el.configBanner.classList.add('show');
+  } else {
+    el.configBanner.classList.remove('show');
+  }
+}
 
 // สร้าง object ใหม่ที่ตัดช่องว่าง/ทำหัวคอลัมน์ให้เป็นตัวพิมพ์ใหญ่ทั้งหมด
 // เพื่อไม่ให้พลาดข้อมูลเวลาหัวตารางใน Google Sheet มีช่องว่างเกิน หรือสะกดต่างเคส
@@ -482,7 +862,7 @@ function normalizeRow(row){
 function getField(row, ...names){
   for(const n of names){
     const v = row[n.toUpperCase()];
-    if(v) return v;
+    if(v !== undefined && v !== null) return v;
   }
   return "";
 }
@@ -491,6 +871,8 @@ function loadData(){
   el.dot.className = 'dot loading';
   el.status.textContent = 'กำลังโหลดข้อมูล…';
   el.input.disabled = true;
+  
+  checkApiConfig();
 
   // เติม timestamp กัน browser/Google cache ข้อมูล CSV เก่าไว้
   // (สาเหตุที่พบบ่อยที่สุดของ "เพิ่มคอลัมน์รูปแล้วแต่ไม่ขึ้น" คือแคชเก่าค้างอยู่)
@@ -598,11 +980,16 @@ function searchData(){
   found.forEach((item, i) => {
     const title = getField(item, "NAME", "ชื่อ");
     const desc = getField(item, "DESCRIPTION", "รายละเอียด");
+    const qtyStr = getField(item, "QTY", "จำนวนคงเหลือ", "จำนวน");
+    const qty = parseInt(qtyStr, 10) || 0;
+    
     let img = getField(item, "IMAGEURL", "IMAGE URL", "รูปภาพ");
     img = convertDriveLink(img);
 
     const card = document.createElement('div');
     card.className = 'item-card';
+    card.dataset.title = title;
+    card.dataset.qty = qty;
 
     const thumbHtml = img
       ? `<img src="${img}" alt="${escapeHtml(title)}" loading="lazy"
@@ -621,11 +1008,19 @@ function searchData(){
            ">`
       : `<div class="thumb-fallback">🖼️<span>ไม่มีรูปภาพ</span></div>`;
 
+    const stockClass = qty <= 0 ? 'out' : qty < 3 ? 'low' : 'ok';
+    const stockText = qty <= 0 ? 'สินค้าหมด' : `คงเหลือ: ${qty} ชิ้น`;
+
     card.innerHTML = `
       <div class="item-thumb">${thumbHtml}</div>
       <div class="item-body">
         <div class="item-title">${highlight(title, keyword)}</div>
         ${desc ? `<p class="item-desc">${escapeHtml(desc)}</p>` : ''}
+        <div class="item-stock ${stockClass}">${stockText}</div>
+        <div class="item-actions">
+          <button class="action-btn use-btn">เบิกอะไหล่</button>
+          <button class="action-btn add-btn">เติมอะไหล่</button>
+        </div>
         <div class="item-index">ITEM ${String(i + 1).padStart(3, '0')}</div>
       </div>
     `;
@@ -633,6 +1028,165 @@ function searchData(){
     el.results.appendChild(card);
   });
 }
+
+// Event Delegation สำหรับปุ่มบนการ์ดผลลัพธ์
+el.results.addEventListener('click', e => {
+  const btn = e.target.closest('.action-btn');
+  if (!btn) return;
+  const card = btn.closest('.item-card');
+  if (!card) return;
+  const title = card.dataset.title;
+  const qty = parseInt(card.dataset.qty, 10);
+  const type = btn.classList.contains('use-btn') ? 'use' : 'add';
+  openActionModal(type, title, qty);
+});
+
+// การจัดการกับ Settings Modal
+el.settingsBtn.addEventListener('click', () => {
+  el.apiWebUrl.value = apiWebUrlValue;
+  el.settingsModal.classList.add('show');
+});
+
+el.configBannerBtn.addEventListener('click', () => {
+  el.apiWebUrl.value = apiWebUrlValue;
+  el.settingsModal.classList.add('show');
+});
+
+const closeSettings = () => el.settingsModal.classList.remove('show');
+el.closeSettingsModalBtn.addEventListener('click', closeSettings);
+el.cancelSettingsBtn.addEventListener('click', closeSettings);
+
+el.saveSettingsBtn.addEventListener('click', () => {
+  const value = el.apiWebUrl.value.trim();
+  if (value && !value.startsWith('http')) {
+    alert('กรุณากรอก URL ที่ถูกต้อง (เริ่มต้นด้วย http:// หรือ https://)');
+    return;
+  }
+  apiWebUrlValue = value;
+  localStorage.setItem('mus_t_api_url', value);
+  closeSettings();
+  checkApiConfig();
+});
+
+// การจัดการกับ Action Modal
+function openActionModal(type, partName, currentQty) {
+  if (!apiWebUrlValue) {
+    alert('กรุณาตั้งค่า Google Apps Script Web App URL ก่อนเริ่มใช้งานการบันทึกประวัติ');
+    el.apiWebUrl.value = apiWebUrlValue;
+    el.settingsModal.classList.add('show');
+    return;
+  }
+
+  el.actionType.value = type;
+  el.actionPartName.value = partName;
+  el.modalPartNameText.textContent = partName;
+  el.modalCurrentQtyText.textContent = `${currentQty} ชิ้น`;
+
+  // เซ็ตวันที่เป็นวันนี้ (เวลาท้องถิ่น)
+  const today = new Date();
+  const yyyy = today.getFullYear();
+  const mm = String(today.getMonth() + 1).padStart(2, '0');
+  const dd = String(today.getDate()).padStart(2, '0');
+  el.actionDate.value = `${yyyy}-${mm}-${dd}`;
+
+  el.actionQty.value = '';
+  el.qtyError.classList.remove('show');
+
+  if (type === 'use') {
+    el.modalTitle.textContent = 'เบิกอะไหล่ (Use)';
+    el.qtyInputLabel.textContent = 'จำนวนที่ต้องการเบิก';
+    el.reasonLabel.textContent = 'สาเหตุ / สถานที่นำไปใช้';
+    el.actionReason.placeholder = 'เช่น ซ่อมเครื่องจักร Line A...';
+    el.actionQty.max = currentQty;
+  } else {
+    el.modalTitle.textContent = 'เติมอะไหล่ (Add)';
+    el.qtyInputLabel.textContent = 'จำนวนที่ต้องการเติม';
+    el.reasonLabel.textContent = 'หมายเหตุ / แหล่งที่มา';
+    el.actionReason.placeholder = 'เช่น สั่งซื้อเพิ่มเติม, โอนคลัง...';
+    el.actionQty.removeAttribute('max');
+  }
+
+  el.actionModal.classList.add('show');
+}
+
+const closeAction = () => el.actionModal.classList.remove('show');
+el.closeActionModalBtn.addEventListener('click', closeAction);
+el.cancelActionBtn.addEventListener('click', closeAction);
+
+// ตรวจสอบจำนวนเบิกห้ามเกินคงเหลือแบบ Real-time
+el.actionQty.addEventListener('input', () => {
+  const type = el.actionType.value;
+  const val = parseInt(el.actionQty.value, 10);
+  const currentQtyText = el.modalCurrentQtyText.textContent;
+  const currentQty = parseInt(currentQtyText, 10) || 0;
+
+  if (type === 'use' && val > currentQty) {
+    el.qtyError.textContent = `⚠️ จำนวนเบิกห้ามมากกว่าจำนวนคงเหลือ (${currentQty} ชิ้น)`;
+    el.qtyError.classList.add('show');
+  } else {
+    el.qtyError.classList.remove('show');
+  }
+});
+
+// บันทึกรายการส่งไปยัง Google Apps Script
+el.actionForm.addEventListener('submit', e => {
+  e.preventDefault();
+
+  const type = el.actionType.value;
+  const partName = el.actionPartName.value;
+  const qty = parseInt(el.actionQty.value, 10);
+  const user = el.actionUser.value.trim();
+  const reason = el.actionReason.value.trim();
+  const date = el.actionDate.value;
+  const currentQty = parseInt(el.modalCurrentQtyText.textContent, 10) || 0;
+
+  if (type === 'use' && qty > currentQty) {
+    alert('ไม่สามารถเบิกเกินจำนวนคงเหลือได้');
+    return;
+  }
+
+  // แสดง Loading overlay
+  el.loadingText.textContent = 'กำลังบันทึกข้อมูลไปยัง Google Sheets...';
+  el.loadingOverlay.classList.add('show');
+
+  // เตรียม parameters
+  const params = new URLSearchParams({
+    action: type === 'use' ? 'Use' : 'Add',
+    partName: partName,
+    qty: qty,
+    user: user,
+    reason: reason,
+    date: date
+  });
+
+  // ส่ง Request ไปยัง Apps Script Web App
+  // ใช้ GET ผ่าน CORS redirect
+  fetch(`${apiWebUrlValue}?${params.toString()}`, {
+    method: 'GET',
+    mode: 'cors'
+  })
+  .then(response => {
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return response.json();
+  })
+  .then(data => {
+    el.loadingOverlay.classList.remove('show');
+    if (data.status === 'success') {
+      alert('บันทึกข้อมูลสำเร็จแล้ว!');
+      closeAction();
+      loadData(); // โหลดข้อมูลใหม่เพื่ออัปเดตหน้าจอหลัก
+    } else {
+      alert(`เกิดข้อผิดพลาดในการบันทึก: ${data.message}`);
+    }
+  })
+  .catch(err => {
+    el.loadingOverlay.classList.remove('show');
+    console.error('Error submitting transaction:', err);
+    alert(`เกิดข้อผิดพลาดในการเชื่อมต่อ: ${err.message}\nโปรดตรวจสอบการตั้งค่า URL หรือการเชื่อมต่ออินเทอร์เน็ต`);
+  });
+});
 
 el.searchBtn.addEventListener('click', searchData);
 
