@@ -754,53 +754,51 @@
 
 <!-- Modal สำหรับ Add/Use -->
 <div id="actionModal" class="modal">
-  <div class="modal-content">
+  <form id="actionForm" class="modal-content">
     <div class="modal-header">
       <h2 id="modalTitle">เบิกอะไหล่</h2>
       <div class="modal-header-actions">
         <button type="button" class="btn btn-secondary" id="cancelActionBtn">ยกเลิก</button>
-        <button type="submit" form="actionForm" class="btn btn-primary" id="submitActionBtn">ยืนยัน</button>
+        <button type="submit" class="btn btn-primary" id="submitActionBtn">ยืนยัน</button>
       </div>
       <button class="close-modal-btn" id="closeActionModalBtn" style="display: none;">&times;</button>
     </div>
     <div class="modal-body">
-      <form id="actionForm">
-        <input type="hidden" id="actionType">
-        <input type="hidden" id="actionPartName">
-        
-        <div class="form-group">
-          <label>ชื่ออะไหล่</label>
-          <div class="form-static-text" id="modalPartNameText">-</div>
-        </div>
-        
-        <div class="form-group">
-          <label id="qtyLabel">จำนวนคงเหลือเดิม</label>
-          <div class="form-static-text" id="modalCurrentQtyText">0 ชิ้น</div>
-        </div>
+      <input type="hidden" id="actionType">
+      <input type="hidden" id="actionPartName">
+      
+      <div class="form-group">
+        <label>ชื่ออะไหล่</label>
+        <div class="form-static-text" id="modalPartNameText">-</div>
+      </div>
+      
+      <div class="form-group">
+        <label id="qtyLabel">จำนวนคงเหลือเดิม</label>
+        <div class="form-static-text" id="modalCurrentQtyText">0 ชิ้น</div>
+      </div>
 
-        <div class="form-group">
-          <label for="actionQty" id="qtyInputLabel">จำนวนที่ต้องการเบิก</label>
-          <input type="number" id="actionQty" min="1" required placeholder="ระบุจำนวน...">
-          <div class="form-error-msg" id="qtyError"></div>
-        </div>
+      <div class="form-group">
+        <label for="actionQty" id="qtyInputLabel">จำนวนที่ต้องการเบิก</label>
+        <input type="number" id="actionQty" min="1" required placeholder="ระบุจำนวน...">
+        <div class="form-error-msg" id="qtyError"></div>
+      </div>
 
-        <div class="form-group">
-          <label for="actionUser">ผู้บันทึก / ผู้เบิก</label>
-          <input type="text" id="actionUser" required placeholder="ชื่อของคุณ...">
-        </div>
+      <div class="form-group">
+        <label for="actionUser">ผู้บันทึก / ผู้เบิก</label>
+        <input type="text" id="actionUser" required placeholder="ชื่อของคุณ...">
+      </div>
 
-        <div class="form-group">
-          <label for="actionReason" id="reasonLabel">สาเหตุ / สถานที่นำไปใช้</label>
-          <input type="text" id="actionReason" required placeholder="เช่น ซ่อมเครื่องจักร Line A...">
-        </div>
+      <div class="form-group">
+        <label for="actionReason" id="reasonLabel">สาเหตุ / สถานที่นำไปใช้</label>
+        <input type="text" id="actionReason" required placeholder="เช่น ซ่อมเครื่องจักร Line A...">
+      </div>
 
-        <div class="form-group">
-          <label for="actionDate">วันที่บันทึก</label>
-          <input type="date" id="actionDate" required>
-        </div>
-      </form>
+      <div class="form-group">
+        <label for="actionDate">วันที่บันทึก</label>
+        <input type="date" id="actionDate" required>
+      </div>
     </div>
-  </div>
+  </form>
 </div>
 
 <!-- Settings Modal -->
