@@ -1186,6 +1186,34 @@ el.actionQty.addEventListener('input', () => {
   }
 });
 
+// ─── JSONP helper (หลีกเลี่ยง CORS ของ Apps Script) ───
+function sendJsonp(url, onSuccess, onError) {
+  const cbName = '_gascb_' + Date.now();
+  const script = document.createElement('script');
+  let settled = false;
+
+  const timer = setTimeout(() => {
+    if (!settled) { settled = true; cleanup(); onError(new Error('Request timeout (15s)')); }
+  }, 15000);
+
+  function cleanup() {
+    clearTimeout(timer);
+    delete window[cbName];
+    if (script.parentNode) script.parentNode.removeChild(script);
+  }
+
+  window[cbName] = function(data) {
+    if (!settled) { settled = true; cleanup(); onSuccess(data); }
+  };
+
+  script.onerror = function() {
+    if (!settled) { settled = true; cleanup(); onError(new Error('ไม่สามารถเชื่อมต่อ Apps Script ได้')); }
+  };
+
+  script.src = url + (url.includes('?') ? '&' : '?') + 'callback=' + cbName;
+  document.body.appendChild(script);
+}
+
 el.actionForm.addEventListener('submit', e => {
   e.preventDefault();
 
@@ -1214,22 +1242,27 @@ el.actionForm.addEventListener('submit', e => {
     date: date
   });
 
-  // ใช้ Image trick เพื่อส่งข้อมูล (หลีกเลี่ยง CORS ของ Apps Script redirect)
   const fullUrl = `${apiWebUrlValue}?${params.toString()}`;
 
-  fetch(fullUrl, { method: 'GET', mode: 'no-cors' })
-    .then(() => {
-      // no-cors: response เป็น opaque ไม่สามารถอ่านได้ แต่ request ส่งไปถึง Apps Script แล้ว
+  sendJsonp(
+    fullUrl,
+    function(data) {
       el.loadingOverlay.classList.remove('show');
-      alert('ส่งข้อมูลสำเร็จแล้ว! ✅\nกรุณาตรวจสอบใน Google Sheets เพื่อยืนยันว่าข้อมูลถูกบันทึก');
-      closeAction();
-      setTimeout(() => { loadData(); }, 2000);
-    })
-    .catch(err => {
+      if (data.status === 'success') {
+        const sign = (data.action || '').toLowerCase() === 'add' ? '+' : '-';
+        alert('บันทึกข้อมูลสำเร็จแล้ว! ✅\n' + (data.part || partName) + ': ' + sign + qty + ' → คงเหลือ ' + data.newQty + ' ชิ้น');
+        closeAction();
+        loadData();
+      } else {
+        alert('เกิดข้อผิดพลาดในการบันทึก:\n' + (data.message || 'Unknown error'));
+      }
+    },
+    function(err) {
       el.loadingOverlay.classList.remove('show');
-      console.error('Error submitting transaction:', err);
-      alert('เกิดข้อผิดพลาดในการเชื่อมต่อ\nกรุณาตรวจสอบว่า URL ถูกต้องและ Apps Script ถูก Deploy แล้ว\n\nError: ' + err.message);
-    });
+      console.error('JSONP error:', err);
+      alert('เกิดข้อผิดพลาดในการเชื่อมต่อ\nError: ' + err.message);
+    }
+  );
 });
 
 el.searchBtn.addEventListener('click', searchData);
