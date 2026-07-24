@@ -883,7 +883,7 @@ const el = {
 let items = [];
 let debounceTimer = null;
 
-const DEFAULT_API_URL = 'https://script.google.com/macros/s/AKfycbzzQrzRP2ss6k98DiCBfibf6SvwzbdAUmox8qRJBGD2FeNNTAE2td4y1hcGj6jPV-kM1g/exec';
+const DEFAULT_API_URL = 'https://script.google.com/macros/s/AKfycbx8d5TFAfUZS4UwYJDymHaWSZl9VA5jpy6p0IAEbMwuloKq_uIqdAikJ-Mn7qbqMy4aIw/exec';
 
 const urlParams = new URLSearchParams(window.location.search);
 const queryApiUrl = urlParams.get('api') || urlParams.get('apiUrl');
@@ -892,7 +892,9 @@ if (queryApiUrl) {
   localStorage.setItem('mus_t_api_url', queryApiUrl);
 }
 
-let apiWebUrlValue = queryApiUrl || localStorage.getItem('mus_t_api_url') || DEFAULT_API_URL;
+// DEFAULT_API_URL มีความสำคัญสูงสุด (ป้องกัน localStorage เก่า override)
+let apiWebUrlValue = DEFAULT_API_URL || queryApiUrl || localStorage.getItem('mus_t_api_url') || '';
+console.log('[MUS-T] Using API URL:', apiWebUrlValue);
 
 function checkApiConfig() {
   if (!apiWebUrlValue) {
