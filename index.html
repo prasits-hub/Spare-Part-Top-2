@@ -606,8 +606,19 @@ function searchData(){
 
     const thumbHtml = img
       ? `<img src="${img}" alt="${escapeHtml(title)}" loading="lazy"
-           data-src="${escapeHtml(img)}"
-           onerror="const u=this.getAttribute('data-src'); this.closest('.item-thumb').innerHTML='<div class=&quot;thumb-fallback&quot;>🖼️<span>โหลดรูปไม่ได้</span><a href=&quot;'+u+'&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot; style=&quot;color:var(--accent);font-size:11px;word-break:break-all;padding:0 8px;text-align:center;&quot;>เปิดลิงก์รูปเพื่อตรวจสอบ</a></div>'">`
+           referrerpolicy="no-referrer"
+           data-src="${escapeHtml(img)}" data-retried="0"
+           onerror="
+             const el=this;
+             const tries=parseInt(el.getAttribute('data-retried'));
+             if(tries < 1){
+               el.setAttribute('data-retried', '1');
+               el.src = el.getAttribute('data-src') + (el.getAttribute('data-src').includes('?') ? '&' : '?') + '_r=' + Date.now();
+             } else {
+               const u=el.getAttribute('data-src');
+               el.closest('.item-thumb').innerHTML='<div class=&quot;thumb-fallback&quot;>🖼️<span>โหลดรูปไม่ได้</span><a href=&quot;'+u+'&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot; style=&quot;color:var(--accent);font-size:11px;word-break:break-all;padding:0 8px;text-align:center;&quot;>เปิดลิงก์รูปเพื่อตรวจสอบ</a></div>';
+             }
+           ">`
       : `<div class="thumb-fallback">🖼️<span>ไม่มีรูปภาพ</span></div>`;
 
     card.innerHTML = `
