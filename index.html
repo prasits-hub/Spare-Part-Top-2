@@ -959,7 +959,8 @@ function searchData(){
 
   const found = items.filter(item => {
     const name = getField(item, "NAME", "ชื่อ").toLowerCase();
-    return name.includes(keyword);
+    const desc = getField(item, "DESCRIPTION", "รายละเอียด").toLowerCase();
+    return name.includes(keyword) || desc.includes(keyword);
   });
 
   if(found.length === 0){
@@ -1015,7 +1016,7 @@ function searchData(){
       <div class="item-thumb">${thumbHtml}</div>
       <div class="item-body">
         <div class="item-title">${highlight(title, keyword)}</div>
-        ${desc ? `<p class="item-desc">${escapeHtml(desc)}</p>` : ''}
+        ${desc ? `<p class="item-desc">${highlight(desc, keyword)}</p>` : ''}
         <div class="item-stock ${stockClass}">${stockText}</div>
         <div class="item-actions">
           <button class="action-btn use-btn">เบิกอะไหล่</button>
