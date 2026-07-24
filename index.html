@@ -836,7 +836,26 @@ const el = {
 
 let items = [];
 let debounceTimer = null;
-let apiWebUrlValue = localStorage.getItem('mus_t_api_url') || '';
+
+// ============================================================
+// ตั้งค่าเริ่มต้น Google Apps Script Web App URL ที่นี่ได้เลย
+// (เพื่อประหยัดเวลา ไม่ต้องกรอกใหม่บนมือถือเวลาเปิดผ่าน QR Code)
+// ============================================================
+const DEFAULT_API_URL = '';
+
+// ดึงค่า URL ตามลำดับความสำคัญ:
+// 1. จาก Query Parameter (?api=... หรือ ?apiUrl=...) ในลิงก์เว็บ
+// 2. จาก LocalStorage ของตัวเครื่อง
+// 3. จากค่า DEFAULT_API_URL ด้านบน
+const urlParams = new URLSearchParams(window.location.search);
+const queryApiUrl = urlParams.get('api') || urlParams.get('apiUrl');
+
+if (queryApiUrl) {
+  // บันทึกเก็บไว้ใช้ในครั้งถัดไปโดยอัตโนมัติ
+  localStorage.setItem('mus_t_api_url', queryApiUrl);
+}
+
+let apiWebUrlValue = queryApiUrl || localStorage.getItem('mus_t_api_url') || DEFAULT_API_URL;
 
 function checkApiConfig() {
   if (!apiWebUrlValue) {
