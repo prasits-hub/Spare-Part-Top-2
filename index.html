@@ -1252,8 +1252,39 @@ el.actionForm.addEventListener('submit', e => {
       el.loadingOverlay.classList.remove('show');
       if (data.status === 'success') {
         const sign = (data.action || '').toLowerCase() === 'add' ? '+' : '-';
-        alert('บันทึกข้อมูลสำเร็จแล้ว! ✅\n' + (data.part || partName) + ': ' + sign + qty + ' → คงเหลือ ' + data.newQty + ' ชิ้น');
+        const newQty = (data.newQty !== undefined && data.newQty !== null) ? parseInt(data.newQty, 10) : null;
+
+        // ── อัพเดท items array ทันที (ไม่รอ CSV cache) ──
+        if (newQty !== null) {
+          items.forEach(item => {
+            const itemName = getField(item, 'NAME', 'ชื่อ');
+            if (itemName === partName) {
+              // อัพเดททุก field ที่เป็นจำนวนคงเหลือ
+              if (item['QTY'] !== undefined) item['QTY'] = String(newQty);
+              if (item['จำนวนคงเหลือ'] !== undefined) item['จำนวนคงเหลือ'] = String(newQty);
+              if (item['จำนวน'] !== undefined) item['จำนวน'] = String(newQty);
+            }
+          });
+
+          // ── อัพเดท UI การ์ดทันที ──
+          const allCards = el.results.querySelectorAll('.item-card');
+          allCards.forEach(card => {
+            if (card.dataset.title === partName) {
+              card.dataset.qty = newQty;
+              const stockClass = newQty <= 0 ? 'out' : newQty < 3 ? 'low' : 'ok';
+              const stockText = newQty <= 0 ? 'สินค้าหมด' : `คงเหลือ: ${newQty} ชิ้น`;
+              const stockEl = card.querySelector('.item-stock');
+              if (stockEl) {
+                stockEl.className = `item-stock ${stockClass}`;
+                stockEl.textContent = stockText;
+              }
+            }
+          });
+        }
+
+        alert('บันทึกข้อมูลสำเร็จแล้ว! ✅\n' + (data.part || partName) + ': ' + sign + qty + ' → คงเหลือ ' + (newQty !== null ? newQty : data.newQty) + ' ชิ้น');
         closeAction();
+        // โหลด CSV ใหม่ใน background (อาจยังถูก cache แต่ items ถูกอัพเดทแล้ว)
         loadData();
       } else {
         alert('เกิดข้อผิดพลาดในการบันทึก:\n' + (data.message || 'Unknown error'));
