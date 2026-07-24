@@ -458,7 +458,7 @@
     height: 100vh;
     background: rgba(0,0,0,0.5);
     display: none;
-    align-items: center;
+    align-items: flex-end;
     justify-content: center;
     z-index: 1000;
     animation: fadeIn 0.2s ease;
@@ -467,12 +467,19 @@
   .modal-content {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: var(--radius);
+    border-radius: var(--radius) var(--radius) 0 0;
     width: 100%;
     max-width: 460px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    max-height: 88vh;
+    box-shadow: 0 -4px 25px rgba(0,0,0,0.15);
     overflow: hidden;
     animation: slideUp 0.25s ease-out;
+    display: flex;
+    flex-direction: column;
+  }
+  @media (min-width: 560px){
+    .modal{ align-items: center; }
+    .modal-content{ border-radius: var(--radius); max-height: 90vh; }
   }
   .modal-header {
     display: flex;
@@ -480,6 +487,7 @@
     justify-content: space-between;
     padding: 16px 20px;
     border-bottom: 1px solid var(--border);
+    flex: none;
   }
   .modal-header h2 {
     font-size: 18px;
@@ -500,6 +508,18 @@
   
   .modal-body {
     padding: 20px;
+    overflow-y: auto;
+    flex: 1 1 auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .modal-footer {
+    flex: none;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 14px 20px calc(14px + env(safe-area-inset-bottom, 0px));
+    border-top: 1px solid var(--border);
+    background: var(--surface);
   }
   
   /* Form styles */
@@ -742,12 +762,11 @@
           <label for="actionDate">วันที่บันทึก</label>
           <input type="date" id="actionDate" required>
         </div>
-        
-        <div class="form-actions">
-          <button type="button" class="btn btn-secondary" id="cancelActionBtn">ยกเลิก</button>
-          <button type="submit" class="btn btn-primary" id="submitActionBtn">ยืนยัน</button>
-        </div>
       </form>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" id="cancelActionBtn">ยกเลิก</button>
+      <button type="submit" form="actionForm" class="btn btn-primary" id="submitActionBtn">ยืนยัน</button>
     </div>
   </div>
 </div>
@@ -767,10 +786,10 @@
         <label for="apiWebUrl">Google Apps Script Web App URL</label>
         <input type="url" id="apiWebUrl" placeholder="https://script.google.com/macros/s/.../exec">
       </div>
-      <div class="form-actions">
-        <button type="button" class="btn btn-secondary" id="cancelSettingsBtn">ยกเลิก</button>
-        <button type="button" class="btn btn-primary" id="saveSettingsBtn">บันทึกตั้งค่า</button>
-      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" id="cancelSettingsBtn">ยกเลิก</button>
+      <button type="button" class="btn btn-primary" id="saveSettingsBtn">บันทึกตั้งค่า</button>
     </div>
   </div>
 </div>
@@ -800,7 +819,6 @@ const el = {
   loadErrorState: document.getElementById('loadErrorState'),
   noResultState: document.getElementById('noResultState'),
   
-  // elements for settings and config banner
   configBanner: document.getElementById('configBanner'),
   configBannerBtn: document.getElementById('configBannerBtn'),
   settingsBtn: document.getElementById('settingsBtn'),
@@ -810,7 +828,6 @@ const el = {
   saveSettingsBtn: document.getElementById('saveSettingsBtn'),
   apiWebUrl: document.getElementById('apiWebUrl'),
 
-  // elements for action modal
   actionModal: document.getElementById('actionModal'),
   closeActionModalBtn: document.getElementById('closeActionModalBtn'),
   cancelActionBtn: document.getElementById('cancelActionBtn'),
@@ -829,7 +846,6 @@ const el = {
   reasonLabel: document.getElementById('reasonLabel'),
   actionDate: document.getElementById('actionDate'),
 
-  // loading overlay
   loadingOverlay: document.getElementById('loadingOverlay'),
   loadingText: document.getElementById('loadingText'),
 };
@@ -837,21 +853,12 @@ const el = {
 let items = [];
 let debounceTimer = null;
 
-// ============================================================
-// ตั้งค่าเริ่มต้น Google Apps Script Web App URL ที่นี่ได้เลย
-// (เพื่อประหยัดเวลา ไม่ต้องกรอกใหม่บนมือถือเวลาเปิดผ่าน QR Code)
-// ============================================================
 const DEFAULT_API_URL = '';
 
-// ดึงค่า URL ตามลำดับความสำคัญ:
-// 1. จาก Query Parameter (?api=... หรือ ?apiUrl=...) ในลิงก์เว็บ
-// 2. จาก LocalStorage ของตัวเครื่อง
-// 3. จากค่า DEFAULT_API_URL ด้านบน
 const urlParams = new URLSearchParams(window.location.search);
 const queryApiUrl = urlParams.get('api') || urlParams.get('apiUrl');
 
 if (queryApiUrl) {
-  // บันทึกเก็บไว้ใช้ในครั้งถัดไปโดยอัตโนมัติ
   localStorage.setItem('mus_t_api_url', queryApiUrl);
 }
 
@@ -865,8 +872,6 @@ function checkApiConfig() {
   }
 }
 
-// สร้าง object ใหม่ที่ตัดช่องว่าง/ทำหัวคอลัมน์ให้เป็นตัวพิมพ์ใหญ่ทั้งหมด
-// เพื่อไม่ให้พลาดข้อมูลเวลาหัวตารางใน Google Sheet มีช่องว่างเกิน หรือสะกดต่างเคส
 function normalizeRow(row){
   const clean = {};
   for(const key in row){
@@ -893,8 +898,6 @@ function loadData(){
   
   checkApiConfig();
 
-  // เติม timestamp กัน browser/Google cache ข้อมูล CSV เก่าไว้
-  // (สาเหตุที่พบบ่อยที่สุดของ "เพิ่มคอลัมน์รูปแล้วแต่ไม่ขึ้น" คือแคชเก่าค้างอยู่)
   const bustedUrl = CSV_URL + (CSV_URL.includes('?') ? '&' : '?') + '_=' + Date.now();
 
   Papa.parse(bustedUrl, {
@@ -1049,7 +1052,6 @@ function searchData(){
   });
 }
 
-// Event Delegation สำหรับปุ่มบนการ์ดผลลัพธ์
 el.results.addEventListener('click', e => {
   const btn = e.target.closest('.action-btn');
   if (!btn) return;
@@ -1061,7 +1063,6 @@ el.results.addEventListener('click', e => {
   openActionModal(type, title, qty);
 });
 
-// การจัดการกับ Settings Modal
 el.settingsBtn.addEventListener('click', () => {
   el.apiWebUrl.value = apiWebUrlValue;
   el.settingsModal.classList.add('show');
@@ -1088,7 +1089,6 @@ el.saveSettingsBtn.addEventListener('click', () => {
   checkApiConfig();
 });
 
-// การจัดการกับ Action Modal
 function openActionModal(type, partName, currentQty) {
   if (!apiWebUrlValue) {
     alert('กรุณาตั้งค่า Google Apps Script Web App URL ก่อนเริ่มใช้งานการบันทึกประวัติ');
@@ -1102,7 +1102,6 @@ function openActionModal(type, partName, currentQty) {
   el.modalPartNameText.textContent = partName;
   el.modalCurrentQtyText.textContent = `${currentQty} ชิ้น`;
 
-  // เซ็ตวันที่เป็นวันนี้ (เวลาท้องถิ่น)
   const today = new Date();
   const yyyy = today.getFullYear();
   const mm = String(today.getMonth() + 1).padStart(2, '0');
@@ -1133,7 +1132,6 @@ const closeAction = () => el.actionModal.classList.remove('show');
 el.closeActionModalBtn.addEventListener('click', closeAction);
 el.cancelActionBtn.addEventListener('click', closeAction);
 
-// ตรวจสอบจำนวนเบิกห้ามเกินคงเหลือแบบ Real-time
 el.actionQty.addEventListener('input', () => {
   const type = el.actionType.value;
   const val = parseInt(el.actionQty.value, 10);
@@ -1148,7 +1146,6 @@ el.actionQty.addEventListener('input', () => {
   }
 });
 
-// บันทึกรายการส่งไปยัง Google Apps Script
 el.actionForm.addEventListener('submit', e => {
   e.preventDefault();
 
@@ -1165,11 +1162,9 @@ el.actionForm.addEventListener('submit', e => {
     return;
   }
 
-  // แสดง Loading overlay
   el.loadingText.textContent = 'กำลังบันทึกข้อมูลไปยัง Google Sheets...';
   el.loadingOverlay.classList.add('show');
 
-  // เตรียม parameters
   const params = new URLSearchParams({
     action: type === 'use' ? 'Use' : 'Add',
     partName: partName,
@@ -1179,8 +1174,6 @@ el.actionForm.addEventListener('submit', e => {
     date: date
   });
 
-  // ส่ง Request ไปยัง Apps Script Web App
-  // Google Apps Script จะ redirect เสมอ ต้องใช้ redirect: 'follow'
   fetch(`${apiWebUrlValue}?${params.toString()}`, {
     redirect: 'follow'
   })
@@ -1191,7 +1184,6 @@ el.actionForm.addEventListener('submit', e => {
     try {
       data = JSON.parse(text);
     } catch(e) {
-      // ถ้า parse JSON ไม่ได้ แสดงว่าสคริปต์ยังไม่ถูก deploy ใหม่
       console.error('Response is not JSON:', text);
       alert('ได้รับการตอบกลับที่ไม่ใช่ JSON จาก Apps Script\nกรุณา Deploy เวอร์ชันใหม่ใน Google Apps Script แล้วลองอีกครั้ง\n\nข้อความที่ได้รับ: ' + text.substring(0, 100));
       return;
@@ -1199,7 +1191,7 @@ el.actionForm.addEventListener('submit', e => {
     if (data.status === 'success') {
       alert('บันทึกข้อมูลสำเร็จแล้ว!\n' + (data.part || '') + ': ' + (data.action === 'Add' ? '+' : '-') + qty + ' → คงเหลือ ' + data.newQty + ' ชิ้น');
       closeAction();
-      loadData(); // โหลดข้อมูลใหม่เพื่ออัปเดตหน้าจอหลัก
+      loadData();
     } else {
       alert('เกิดข้อผิดพลาดในการบันทึก:\n' + data.message);
     }
