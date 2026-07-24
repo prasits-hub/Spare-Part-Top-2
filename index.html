@@ -494,6 +494,23 @@
     font-weight: 600;
     margin: 0;
     color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+    flex: 1;
+    margin-right: 8px;
+  }
+  .modal-header-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-shrink: 0;
+  }
+  .modal-header-actions .btn {
+    padding: 6px 14px;
+    font-size: 13.5px;
+    border-radius: 6px;
   }
   .close-modal-btn {
     border: none;
@@ -725,7 +742,11 @@
   <div class="modal-content">
     <div class="modal-header">
       <h2 id="modalTitle">เบิกอะไหล่</h2>
-      <button class="close-modal-btn" id="closeActionModalBtn">&times;</button>
+      <div class="modal-header-actions">
+        <button type="button" class="btn btn-secondary" id="cancelActionBtn">ยกเลิก</button>
+        <button type="submit" form="actionForm" class="btn btn-primary" id="submitActionBtn">ยืนยัน</button>
+      </div>
+      <button class="close-modal-btn" id="closeActionModalBtn" style="display: none;">&times;</button>
     </div>
     <div class="modal-body">
       <form id="actionForm">
@@ -763,10 +784,6 @@
           <input type="date" id="actionDate" required>
         </div>
       </form>
-    </div>
-    <div class="modal-footer">
-      <button type="button" class="btn btn-secondary" id="cancelActionBtn">ยกเลิก</button>
-      <button type="submit" form="actionForm" class="btn btn-primary" id="submitActionBtn">ยืนยัน</button>
     </div>
   </div>
 </div>
