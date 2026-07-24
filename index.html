@@ -349,6 +349,27 @@
     margin:0;
   }
 
+  .item-line{
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12.5px;
+    color: var(--text-muted);
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    padding: 3px 8px;
+    border-radius: 6px;
+    width: fit-content;
+    margin-top: 2px;
+    font-family: var(--sans);
+  }
+  .item-line mark{
+    background: var(--accent-dim);
+    color: var(--accent-dark);
+    border-radius: 3px;
+    padding: 0 2px;
+  }
+
   .item-index{
     margin-top:auto;
     padding-top:8px;
@@ -715,7 +736,7 @@
       <input
         type="text"
         id="searchInput"
-        placeholder="พิมพ์ชื่ออะไหล่ที่ต้องการค้นหา…"
+        placeholder="พิมพ์ชื่ออะไหล่, รายละเอียด หรือ Line ที่ต้องการค้นหา…"
         autocomplete="off"
         disabled
       >
@@ -733,7 +754,7 @@
   <div class="state-panel" id="emptyState">
     <div class="icon">🔎</div>
     <div class="title">ยังไม่มีคำค้นหา</div>
-    <div class="sub">พิมพ์ชื่ออะไหล่ในช่องด้านบนเพื่อเริ่มค้นหา</div>
+    <div class="sub">พิมพ์ชื่ออะไหล่ หรือ Line ในช่องด้านบนเพื่อเริ่มค้นหา</div>
   </div>
 
   <div class="state-panel error" id="loadErrorState">
@@ -772,6 +793,11 @@
         <div class="form-static-text" id="modalPartNameText">-</div>
       </div>
       
+      <div class="form-group" id="modalLineGroup">
+        <label>Line / สายการผลิต</label>
+        <div class="form-static-text" id="modalLineText">-</div>
+      </div>
+
       <div class="form-group">
         <label id="qtyLabel">จำนวนคงเหลือเดิม</label>
         <div class="form-static-text" id="modalCurrentQtyText">0 ชิ้น</div>
@@ -866,6 +892,7 @@ const el = {
   actionPartName: document.getElementById('actionPartName'),
   modalTitle: document.getElementById('modalTitle'),
   modalPartNameText: document.getElementById('modalPartNameText'),
+  modalLineText: document.getElementById('modalLineText'),
   modalCurrentQtyText: document.getElementById('modalCurrentQtyText'),
   qtyLabel: document.getElementById('qtyLabel'),
   qtyInputLabel: document.getElementById('qtyInputLabel'),
@@ -1014,7 +1041,8 @@ function searchData(){
   const found = items.filter(item => {
     const name = getField(item, "NAME", "ชื่อ").toLowerCase();
     const desc = getField(item, "DESCRIPTION", "รายละเอียด").toLowerCase();
-    return name.includes(keyword) || desc.includes(keyword);
+    const line = getField(item, "LINE", "ไลน์", "LINE NO", "LINENO").toLowerCase();
+    return name.includes(keyword) || desc.includes(keyword) || line.includes(keyword);
   });
 
   if(found.length === 0){
@@ -1035,6 +1063,7 @@ function searchData(){
   found.forEach((item, i) => {
     const title = getField(item, "NAME", "ชื่อ");
     const desc = getField(item, "DESCRIPTION", "รายละเอียด");
+    const line = getField(item, "LINE", "ไลน์", "LINE NO", "LINENO");
     const qtyStr = getField(item, "QTY", "จำนวนคงเหลือ", "จำนวน");
     const qty = parseInt(qtyStr, 10) || 0;
     
@@ -1045,6 +1074,7 @@ function searchData(){
     card.className = 'item-card';
     card.dataset.title = title;
     card.dataset.qty = qty;
+    card.dataset.line = line;
 
     const thumbHtml = img
       ? `<img src="${img}" alt="${escapeHtml(title)}" loading="lazy"
@@ -1071,6 +1101,7 @@ function searchData(){
       <div class="item-body">
         <div class="item-title">${highlight(title, keyword)}</div>
         ${desc ? `<p class="item-desc">${highlight(desc, keyword)}</p>` : ''}
+        ${line ? `<div class="item-line">📍 <strong>Line:</strong> ${highlight(line, keyword)}</div>` : ''}
         <div class="item-stock ${stockClass}">${stockText}</div>
         <div class="item-actions">
           <button class="action-btn use-btn">เบิกอะไหล่</button>
@@ -1091,8 +1122,9 @@ el.results.addEventListener('click', e => {
   if (!card) return;
   const title = card.dataset.title;
   const qty = parseInt(card.dataset.qty, 10);
+  const line = card.dataset.line || '';
   const type = btn.classList.contains('use-btn') ? 'use' : 'add';
-  openActionModal(type, title, qty);
+  openActionModal(type, title, qty, line);
 });
 
 el.settingsBtn.addEventListener('click', () => {
@@ -1126,7 +1158,7 @@ el.saveSettingsBtn.addEventListener('click', () => {
   checkApiConfig();
 });
 
-function openActionModal(type, partName, currentQty) {
+function openActionModal(type, partName, currentQty, line = '') {
   if (!apiWebUrlValue) {
     alert('กรุณาตั้งค่า Google Apps Script Web App URL ก่อนเริ่มใช้งานการบันทึกประวัติ');
     el.apiWebUrl.value = apiWebUrlValue;
@@ -1138,6 +1170,9 @@ function openActionModal(type, partName, currentQty) {
   el.actionType.value = type;
   el.actionPartName.value = partName;
   el.modalPartNameText.textContent = partName;
+  if (el.modalLineText) {
+    el.modalLineText.textContent = line || '-';
+  }
   el.modalCurrentQtyText.textContent = `${currentQty} ชิ้น`;
 
   const today = new Date();
